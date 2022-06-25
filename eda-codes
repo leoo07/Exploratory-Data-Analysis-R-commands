@@ -1,0 +1,153 @@
+data=read.csv("A:/3rd year BE/EDA/COVID-19 India Statewise Vaccine Data.csv")
+ls()
+ls(data)
+class(data)
+str(data)
+data[3,3]
+data[3,1:4]
+data[,1]
+data[c(1,3),]
+data[c(1,3),-4]
+data[c(1,3),"State.UTs"]
+sort(data$State.UTs)
+order(data$Population)
+rank(data$Dose.1)
+head(data)
+tail(data)
+head(data,n=3)
+summary(data)
+colnames(data)
+row.names(data)
+dimnames(data)
+t(data)
+with(data,order(State.UTs))
+as.matrix(data)
+as.list(data)
+quantile(data$Population,0.2)
+quantile(data$Population,c(0.2,0.5,0.8))
+quantile(data$Population, c(0.5,0.75,0.25))
+cumsum(data$Dose.1)
+cummax(data$Dose.1)
+cummin(data$Dose.1)
+cumprod(data$Dose.2)
+cummax("State.UTs")
+seq(data$Dose.2)
+seq(along=data$Dose.2)
+mean(data[,2])
+colSums(data[,c(2,3)])
+rowMeans(data[,c(3,4)])
+apply(data[,c(3,4)],2,median)
+max(data$Population)
+lapply(data,mean,na.rm=TRUE)
+sapply(data,mean,na.rm=TRUE)
+colnames=names(data)
+colnames
+data.tab = with(data,table(colnames[1],colnames[2]))
+data.tab
+prop.table(data$Dose.2)
+stem(data$Population)
+library(dplyr)
+data %>% mutate(newcol = NA)
+data = data %>% rename(states = "State.UTs")
+data
+max(data$Dose.1)
+data %>% select(Dose.2,Dose.1,Population)
+data[data$bookft == "Population" &
+data$reviews >= 1 &
+data$reviews <= 20,
+c("Dose.1", "Dose.2")]
+library(ggplot2)
+ggplot(data,aes(x=states,y=Dose.1))+geom_point()
+plot(data$Dose.1,data$Population,type="l")
+plot(data$Dose.1,data$Population,type="l")
+points(data$Dose.1,data$Population)
+plot(data$Dose.1,data$Population,type="l")
+points(data$Dose.1,data$Population)
+plot(data$Dose.2,data$Population,type="l",col="red")
+points(data$Dose.2,data$Population,col="red")
+ggplot(data,aes(x=states,y=Dose.1))+geom_line()
+ggplot(data,aes(x=states,y=Dose.1))+geom_line()+geom_point()
+ggplot(data,aes(x=states,y=Population))+geom_col()
+ggplot(data,aes(x=factor(Dose.1),y=Dose.2))+geom_col()
+ggplot(data,aes(x=Dose.1))+geom_bar()
+ggplot(data,aes(x=factor(Dose.1)))+geom_bar()
+hist(data$Dose.1)
+hist(data$Dose.2)
+hist(data$Population)
+hist(data$Dose.1,breaks=10)
+ggplot(data,aes(x=Dose.1))+geom_histogram()
+boxplot(data$Population,data$Dose.1)
+plot(data$Population,data$Dose.1)
+boxplot(Dose.1~Dose.2,data=data)
+boxplot(Population~Dose.1+Dose.2,data=data)
+ggplot(data,aes(x=states,y=Population))+geom_boxplot()
+ggplot(data,aes(x=interaction(Dose.1,Dose.2),y=Population,states))+geom_boxplot()
+ggplot(data,aes(x=Dose.1,y=Dose.2))+geom_col(fill="lightblue",colour="red")
+ggplot(data,aes(x=Dose.1,y=Dose.2,fill = states))+geom_col(position="dodge")
+ggplot(data,aes(x=Dose.1,y=Dose.2,fill = Population))+geom_col(position="dodge")
+ggplot(data,aes(x=Dose.1,y=Dose.2,fill=states))+geom_col(position="dodge",colour = "green")+scale_fill_brewer(palette = "Pastel1")
+ans = data %>%
+arrange(desc(data)) %>%
+slice(1:10)
+ans
+ggplot(ans,aes(x=states,y=Dose.1,fill=Population))+geom_col()
+ggplot(data,aes(x=states,y=Dose.2,fill=Population))+geom_col(width=0.5,position = "dodge")
+ggplot(data,aes(x=states,y=Dose.2,fill=Population))+geom_col(width=0.5,position = position_dodge(0.7))
+ggplot(ans,aes(x=states,y=Dose.1,fill=Population))+geom_col()+guides(fill=guide_legend(reverse=TRUE))
+ggplot(ans, aes(x = interaction(Dose.1, Dose.2), y = Population)) +
+geom_col() +
+geom_text(aes(label = Population), vjust = 1.5, colour = "green")
+ggplot(ans, aes(x = interaction(Dose.1, Dose.2), y = Population)) +
+geom_col() +
+geom_text(aes(label = Population), vjust = -0.2, colour = "green")
+ce <- ans%>%
+group_by(Dose.1) %>%
+mutate(label_y = cumsum(Dose.1) - 0.5 * Dose.1)
+ggplot(ce, aes(x = states, y = Dose.1, fill = Dose.2)) +
+geom_col() +
+geom_text(aes(y = label_y, label = Dose.1), colour = "green")
+ggplot(ans, aes(x = Dose.1, y = Dose.2)) +
+geom_line() +
+ylim(0, max(ans$Dose.2))
+ggplot(ans, aes(x = Dose.1, y = Dose.2)) +
+geom_line() +
+expand_limits(y = 0)
+ggplot(ans, aes(x = Dose.1, y = Dose.2)) +
+geom_line() +
+geom_point()
+ggplot(ans, aes(x = Dose.1, y = Population)) +
+geom_line() +
+geom_point()
+ggplot(ans, aes(x = Dose.2, y = Population)) +
+geom_line() +
+geom_point() +
+scale_y_log10()
+ggplot(ans, aes(x = Dose.2, y = Dose.1, colour = Population)) +
+geom_line()
+ggplot(ans, aes(x = Dose.1, y = Dose.2, shape = states)) +
+geom_line() +
+geom_point(size = 4)
+ggplot(ans, aes(x = Dose.1, y = Dose.2, fill = states)) +
+geom_line() +
+geom_point(size = 4, shape = 21)
+ggplot(ans, aes(x = Dose.1, y = Dose.2)) +
+geom_line(linetype = "dashed", size = 1, colour = "blue")
+ggplot(ans, aes(x = Dose.1, y = Dose.2, colour = states)) +
+geom_line(linetype = "dashed") +
+geom_point(shape = 22, size = 3, fill = "white")
+ggplot(ans, aes(x = Population, y = Dose.1)) +
+geom_area()
+ggplot(ans, aes(x = Dose.1, y = Dose.2)) +
+geom_area(colour = "black", fill = "blue", alpha = .2)
+ggplot(ans, aes(x = Dose.1, y = Dose.2)) +
+geom_line(aes(y = Dose.1 - Dose.2), colour = "grey50",
+linetype = "dotted") +
+geom_line(aes(y = Dose.1 + Dose.2), colour = "grey50",
+linetype = "dotted") +
+geom_line()
+ggplot(ans, aes(x = Dose.1, y = Dose.2)) +
+geom_ribbon(aes(ymin = Dose.2 - Dose.1,
+ymax = Dose.1 + Dose.2),
+alpha = 0.2) +
+geom_line()
+savehistory("A:/3rd year BE/EDA/codes.txt")
