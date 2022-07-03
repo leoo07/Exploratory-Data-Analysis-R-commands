@@ -1,0 +1,653 @@
+---
+title: "EDA LA-1"
+output:
+  pdf_document: default
+  word_document: default
+  html_document:
+    df_print: paged
+date: '2022-06-23'
+author:
+  - MONISHA M, 1NT19IS085
+  - ANANYA ANANTH, 1NT19IS021
+  
+---
+### 1.Reading the data from the dataset
+```{r}
+data=read.csv("A:/3rd year BE/EDA/COVID-19 India Statewise Vaccine Data.csv")
+```
+
+### 2. import library ggplot2
+```{r}
+library(ggplot2)
+```
+
+### 3. Simple scatter plot 
+```{r}
+plot(data$Dose.1, data$Dose.2)
+```
+
+
+### 4.Simple Scatter plot using ggplot2
+```{r}
+library(ggplot2)
+ggplot(data, aes(x = Dose.1, y = Dose.2)) +
+ geom_point()
+```
+
+### 5.Scatter plot without passing a dataset
+```{r}
+ggplot(data = NULL, aes(x = mtcars$wt, y = mtcars$mpg)) +
+ geom_point()
+```
+
+### 6.Simple line graph
+```{r}
+plot(data$Dose.1, data$Dose.2, type = "l")
+```
+
+### 7. To change column names
+```{r}
+library(dplyr)
+data=rename(data,"state"=State.UTs)
+data=rename(data,"dose1"=Dose.1)
+data=rename(data,"dose2"=Dose.2)
+data=rename(data,"total"=Total.Vaccination.Doses)
+data=rename(data,"population"=Population)
+data
+```
+
+
+
+### 8. Line and Point plot
+```{r}
+plot(data$dose1, data$dose2, type = "l")
+points(data$dose1, data$dose2)
+```
+
+### 9.Line and Point plot with colours
+```{r}
+plot(data$dose1, data$dose2, type = "l")
+points(data$dose1, data$dose2)
+lines(data$dose1, data$dose2/2, col = "red")
+points(data$dose1, data$dose2/2, col = "red")
+```
+### 10.Line graph using ggplot2   
+```{r}
+library(ggplot2)
+ggplot(data, aes(x = dose1, y = dose2)) +
+ geom_line()
+```
+### 11.Point and Line graph usinf ggplot2
+```{r}
+ggplot(data, aes(x = dose1, y = dose2))+
+ geom_line() +
+ geom_point()
+```
+### 12.Simple Bare plot 
+```{r}
+barplot(data$dose1)
+```
+### 13.Bar graph using ggplot2
+```{r}
+ggplot(data,aes(x=state,y=dose2))+geom_col()
+```
+### 14.Simple Histogram plot
+```{r}
+hist(data$total)
+```
+### 15.Simple histogram by specifying bins with breaks
+```{r}
+hist(data$dose1,breaks=100)
+```
+### 16.Histogram using ggplot2
+```{r}
+library(ggplot2)
+ggplot(data,aes(x=dose1))+geom_histogram()
+```
+###17.Box plot using ggplot2
+```{r}
+data1=head(data)
+plot(factor(data1$state),data1$total)
+```
+### 18.Box plot using ggplot2
+```{r}
+ggplot(data1,aes(x=state,y=total))+geom_boxplot()
+```
+### 19.Simple function curve
+```{r}
+curve(x^3+x+10,from=-4,to=4)
+```
+### 20.Plotting curve using user defined function
+```{r}
+myfun <- function(xvar) {
+ 1 / (1 + exp(-xvar + 10))
+}
+curve(myfun(x), from = 0, to = 20)
+curve(1 - myfun(x), add = TRUE, col = "red")
+```
+### 21.Simple curve using ggplot2
+```{r}
+library(ggplot2)
+# This sets the x range from 0 to 20
+ggplot(data.frame(x = c(0, 20)), aes(x = x)) +
+ stat_function(fun = myfun, geom = "line")
+```
+### 22.Bar graph using colour and fill colour
+```{r}
+ggplot(data,aes(x=state,y=total))+geom_col(fill="purple",colour="black")
+```
+### 23.Bar graph usig gruping bars together
+```{r}
+ggplot(data1,aes(x=state,y=total,fill=dose1))+geom_col(postion='dodge')
+```
+### 24.Simple Bar graph and adding colours using geom_col and fill region
+```{r}
+library(dplyr)
+
+ggplot(data1,aes(x=state,y=dose1,fill=dose2))+
+  geom_col()
+```
+### 25. Box plot suing colour fill and changing x label
+```{r}
+ggplot(data1, aes(x = reorder(dose1,dose2), y = total, fill = state)) +
+ geom_col(colour = "black")+
+ xlab("Satate")
+```
+### 26.Using position ="identity" in Bar graph 
+
+position = "identity": This will prevent a warning message about stacking not being well defined for negative numbers
+
+```{r}
+ggplot(data1, aes(x = reorder(dose1,dose2), y = total, fill = state)) +
+ geom_col(position = "identity")
+```
+
+### 27.Bar plot using scale_fill_manual() and remove the legend with guide = FALSE
+We can change the colors with scale_fill_manual() and remove the legend with
+guide = FALSE. We also addedx a thin black outline around
+each of the bars by setting colour and specifying size, which is the thickness of the
+outline (in millimeters)
+```{r}
+data2=data[c(7,9),]
+ggplot(data2, aes(x = reorder(dose1,dose2), y = total, fill = state)) +
+ geom_col(position = "identity", colour = "black", size = 0.25) +
+ scale_fill_manual(values = c("#CCEEFF", "#FFDDDD"), guide = FALSE)
+```
+### 28. Grouped Bard graph with narrow bars
+
+```{r}
+data3=data[c(7,9,12,13,14),]
+ggplot(data3, aes(x = state, y = total, fill = state)) +
+ geom_col(width = 0.5, position = "dodge")
+```
+### 29.Grouped Bard graph with narrow bars with some space in between
+```{r}
+ggplot(data3, aes(x = state, y = total, fill = state)) +
+ geom_col(width = 0.5, position = position_dodge(0.7))
+```
+### 30.Adding labels in Bar graph (labels under the bars)
+
+```{r}
+ggplot(data3, aes(x = interaction(dose1, dose2), y = population)) +
+ geom_col() +
+ geom_text(aes(label = population), vjust = 1.5, colour = "white")
+```
+### 31. Adding labels to bar graph (labels above bars)
+```{r}
+ggplot(data3, aes(x = interaction(dose1, dose2), y = population)) +
+ geom_col() +
+ geom_text(aes(label = population), vjust = -0.2)
+```
+### 32.Simple Cleveland dot plot
+```{r}
+ggplot(data, aes(x = population, y = state)) +
+ geom_point()
+```
+### 33. To improve the appearamce of the above graph
+```{r}
+ggplot(data, aes(x = population, y = reorder(state, population))) +
+ geom_point(size = 3) + # Use a larger dot
+ theme_bw() +
+ theme(
+ panel.grid.major.x = element_blank(),
+ panel.grid.minor.x = element_blank(),
+ panel.grid.major.y = element_line(colour = "grey60", linetype = "dashed")
+ )
+```
+### 34.To swap the axes in a Cleveland graph
+```{r}
+ggplot(data, aes(x = reorder(state, total), y = total)) +
+ geom_point(size = 3) + # Use a larger dot
+ theme_bw() +
+ theme(
+ panel.grid.major.y = element_blank(),
+ panel.grid.minor.y = element_blank(),
+ panel.grid.major.x = element_line(colour = "grey60", linetype = "dashed"),
+ axis.text.x = element_text(angle = 60, hjust = 1)
+ )
+```
+### 35.Simple Line graph using ggplot() and geo_line() 
+```{r}
+ggplot(data, aes(x = dose1, y = dose2)) +
+ geom_line()
+```
+### 36.Line graph with the factor on x axis
+```{r}
+ggplot(data3, aes(x = factor(state), y = dose2, group = 1)) +
+ geom_line()
+```
+### 37. Line graph with manually set y range
+```{r}
+ggplot(data, aes(x = dose1, y = dose2)) +
+ geom_line() +
+ ylim(0, max(data$state))
+```
+
+
+### 38.Another method to plot the above graph
+```{r}
+ggplot(data, aes(x = dose1, y = dose2)) +
+ geom_line() +
+ expand_limits(y = 0)
+```
+### 39. Adding poitns to a line graph
+```{r}
+ggplot(data, aes(x = dose1, y = dose2)) +
+ geom_line() +
+ geom_point()
+
+```
+
+
+### 40. Line graph with log on y axis
+```{r}
+ggplot(data, aes(x = dose1, y = dose2)) +
+ geom_line() +
+ geom_point() +
+ scale_y_log10()
+```
+### 41. Line graph with variable mapped to colour
+```{r}
+ggplot(data3, aes(x = dose1, y = total, colour = dose2)) +
+ geom_line()
+```
+### 42. Line graph with different shapes
+```{r}
+ggplot(data3, aes(x = dose1, y = dose2, shape = state)) +
+ geom_line() +
+ geom_point(size = 4) 
+```
+### 43. With coloured fill shapes in the above graph
+```{r}
+ggplot(data1, aes(x = dose1, y = dose2, fill = state)) +
+ geom_line() +
+ geom_point(size = 4, shape = 21) 
+```
+### 44.Line graph with different line type, line size and line colour
+```{r}
+ggplot(data, aes(x = dose1, y = population)) +
+ geom_line(linetype = "dashed", size = 1, colour = "blue")
+```
+### 45. Line graph with changing the line colour and line size for better visual
+```{r}
+ggplot(data, aes(x = dose1, y = dose2)) +
+ geom_line(colour = "darkgreen", size = 1.5)
+```
+
+### 46. Line graph with points and chganging the line type and point type
+```{r}
+ggplot(data3, aes(x = dose1, y = dose2)) +
+ geom_line(linetype = "dashed") +
+ geom_point(shape = 22, size = 3, fill = "red")
+```
+### 47. Line graph with other modifications outside aes() function
+setting the size, shape, colour, and/or fill outside of aes() function
+```{r}
+ggplot(data3, aes(x = dose1, y = dose2)) +
+ geom_line() +
+ geom_point(size = 4, shape = 22, colour = "darkred", fill = "pink")
+```
+### 48.Line and point graph with a white fill and shape circle
+```{r}
+ggplot(data3, aes(x = dose1, y = dose2)) +
+ geom_line() +
+ geom_point(size = 4, shape = 21, fill = "white")
+```
+### 49. Line and Point graph using scale_colour_brewer and scale_colour_manual functions
+ to use a different palette,using scale_colour_brewer() or scale_colour_manual()
+```{r}
+ggplot(data3, aes(x = dose1, y = dose2, fill = "pink")) +
+ geom_line() +
+ geom_point(shape = 21, size = 3) +
+ scale_fill_manual(values = "white")
+```
+### 50. Simple Area plot using ggplot2
+```{r}
+
+ggplot(data, aes(x = dose1, y = dose2)) +
+ geom_area()
+```
+### 51.Area plot with improvisation in visuals
+```{r}
+ggplot(data, aes(x = dose1, y = dose2)) +
+ geom_area(colour = "black", fill = "blue", alpha = .2)
+```
+### 52. Plotting simple Ribbon graph 
+```{r}
+ggplot(data, aes(x = dose1, y = dose2)) +
+geom_ribbon(aes(ymin = dose1 - dose2,
+ ymax = dose1 + dose2),
+ alpha = 0.2) +
+geom_line()
+```
+### 53.Ribbon graph with upper and lower bounds as dotted lines
+```{r}
+ggplot(data, aes(x = total, y = population)) +
+ geom_line(aes(y = total - population), colour = "grey50",
+ linetype = "dotted") +
+ geom_line(aes(y = total + population), colour = "grey50",
+ linetype = "dotted") +
+ geom_line()
+```
+### 54. Scatter plot using ggplot2
+```{r}
+ggplot(data[1:15,], aes(x = state, y = total)) +
+ geom_point()
+```
+
+### 55. Scaotter plot with hollow circles
+```{r}
+ggplot(data, aes(x = dose1, y = dose2)) +
+ geom_point(shape = 21)
+```
+
+### 56.Scatter plots with larger points
+```{r}
+ggplot(data, aes(x = dose1, y = dose2)) +
+ geom_point(size = 3)
+```
+
+### 57.Grouping points by variables mapped to colour or shape
+```{r}
+ggplot(data3, aes(x = dose1, y = dose2, shape = state, colour = state)) +
+ geom_point()
+```
+### 58.Scatter plot with scale_shape_manual and scale_colour_brewer functions
+```{r}
+ggplot(data2, aes(x = dose1, y = dose2, shape = state, colour = state)) +
+ geom_point() +
+ scale_shape_manual(values = c(1,2)) +
+ scale_colour_brewer(palette = "Set1")
+```
+### 59.Scatter plot with different point shape
+```{r}
+ggplot(data, aes(x = dose1, y = dose2)) +
+ geom_point(shape = 3)
+```
+### 60. Adding fitted regression model lines
+```{r}
+hw_sp <- ggplot(data, aes(x = dose1, y = dose2))
+hw_sp +
+ geom_point() +
+ stat_smooth(method = lm)
+```
+### 61. The above plot with 99% confidence region
+```{r}
+hw_sp +
+ geom_point() +
+ stat_smooth(method = lm, level = 0.99)
+```
+### 62.Adding labels to the scatter plot
+```{r}
+countries_sp <- ggplot(data3, aes(x = dose1, y = dose2)) +
+ geom_point()
+countries_sp +
+ geom_text(aes(label = state), size = 4)
+```
+### 63. Scatter plot with labels using geo_text() function
+```{r}
+library(ggrepel)
+countries_sp +
+ geom_text(aes(label = state), size = 3, vjust = 0)
+```
+### 64.Plotting 2 histograms using facet_gri() function
+```{r}
+ggplot(data2, aes(x = dose1)) +
+ geom_histogram(fill = "white", colour = "black") +
+ facet_grid(state ~ .)
+```
+### 65.Above histograms with modified aesthetics
+```{r}
+ggplot(data2, aes(x = population)) +
+ geom_histogram(fill = "blue", colour = "black") +
+ facet_grid(state ~ .)
+```
+### 66. Combining the stacked histograms as one hostogram for better comparison
+ Map state to fill, make the bars NOT stacked, and make them semitransparent
+```{r}
+ggplot(data1, aes(x = dose1, fill = state)) +
+ geom_histogram(position = "identity", alpha = 0.4)
+```
+### 67.Simple Density curve 
+```{r}
+ggplot(data, aes(x = total)) +
+ geom_density()
+```
+
+### 69.Density curve using geom_line() function
+```{r}
+ggplot(faithful, aes(x = waiting)) +
+ geom_line(stat = "density") +
+ expand_limits(y = 0)
+```
+### 70.Plotting Density curve with different smoothness of curve 
+```{r}
+ggplot(data, aes(x = total)) +
+ geom_line(stat = "density") +
+ geom_line(stat = "density", adjust = .25, colour = "red") +
+ geom_line(stat = "density", adjust = 2, colour = "blue")
+```
+### 71.Plotting Density curve with colour fill and alpha as 0.2
+```{r}
+ggplot(data, aes(x = total)) +
+ geom_density(fill = "blue", alpha = .2) 
+```
+### 72.Plotting Density plot overlaid on a histogram
+```{r}
+ggplot(data, aes(x = dose1, y = ..density..)) +
+ geom_histogram(fill = "cornsilk", colour = "grey60", size = .2) +
+ geom_density() 
+```
+### 73.Frequency polygon with ggplot2
+```{r}
+ggplot(data, aes(x=total)) +
+ geom_freqpoly()
+```
+### 74.Box plot using ggplot2
+```{r}
+data4=data[1,]
+ggplot(data3, aes(x = factor(state), y = dose1/10000)) +
+ geom_boxplot()
+```
+### 75.Simple Violin plot using ggplot2 
+```{r}
+hw_p <- ggplot(data, aes(x = dose1, y = dose2))
+hw_p +
+ geom_violin()
+```
+### 76. Box plot overlaid on Violin plot
+```{r}
+hw_p +
+ geom_violin() +
+ geom_boxplot(width = .1, fill = "red", outlier.colour = NA) +
+ stat_summary(fun.y = median, geom = "point", fill = "white", shape = 21,
+ size = 2.5)
+```
+### 77. Trimming the tails of violin plot
+The default range goes from the minimum to maximum data values; the flat ends of
+the violins are at the extremes of the data. It’s possible to keep the tails, by setting trim= FALSE
+```{r}
+hw_p +
+ geom_violin(trim = FALSE)
+```
+### 78. Violin plot with scale="count" 
+By default, the violins are scaled so that the total area of each one is the same (if trim
+= TRUE, then it scales what the area would be including the tails). Instead of equal
+areas, you can use scale = "count" to scale the areas proportionally to the number
+of observations in each group 
+```{r}
+hw_p +
+ geom_violin(scale = "count")
+```
+### 79.Simple Dot plot using ggplot2 
+```{r}
+c2009 <- data %>%
+ filter(total<= 30381117 & total >= 1313783)
+# Create a base ggplot object using `c2009`, called `c2009_p` (for c2009 plot)
+c2009_p <- ggplot(c2009, aes(x = dose1))
+c2009_p +
+ geom_dotplot()
+```
+
+### 80.Plotting line graph on top of shaded regions
+```{r}
+ggplot(data, aes(x = dose1, y = dose2)) +
+geom_ribbon(aes(ymin = dose2 - dose1,
+ymax = dose1 + dose2),
+alpha = 0.2) +
+geom_line()
+```
+
+
+### 81.Area graph With a dotted line for upper and lower bounds
+```{r}
+ggplot(data, aes(x = dose1, y = dose2)) +
+geom_line(aes(y = dose1 - dose2), colour = "grey50",
+linetype = "dotted") +
+geom_line(aes(y = dose1 + dose2), colour = "grey50",
+linetype = "dotted") +
+geom_line()
+```
+
+### 82.Plotting areaplot with colours for better analysis
+```{r}
+ggplot(data, aes(x = dose1, y = dose2)) +
+ geom_area(colour = "black", fill = "blue", alpha = .2)
+```
+
+### 83.Plotting areaplot
+```{r}
+ggplot(data, aes(x = population, y = dose1)) +
+ geom_area()
+``` 
+
+### 84.Plotting dashed lined raph with points
+```{r}
+ggplot(data, aes(x = dose1, y = dose2, colour = state)) +
+ geom_line(linetype = "dashed") +
+ geom_point(shape = 22, size = 3, fill = "white")
+```
+
+### 85.Plotting dashed line graph
+```{r}
+ggplot(data, aes(x = dose1, y = dose2)) +
+ geom_line(linetype = "dashed", size = 1, colour = "blue")
+```
+
+### 86.Mapping variables to propertoes of a point of different colors and same shape
+```{r}
+ggplot(data, aes(x = dose1, y = dose2, fill = state)) +
+ geom_line() +
+ geom_point(size = 4, shape = 21)
+```
+
+### 87.Mapping variables to propertoes of a point
+```{r}
+ggplot(data, aes(x = dose1, y = dose2, shape = state)) +
+ geom_line() +
+ geom_point(size = 4)
+```
+
+
+### 89.Plotting line and point graph for ans data
+
+```{r}
+ggplot(data, aes(x = dose1, y = dose2)) +
+ geom_line() +
+ geom_point()
+```
+### 90.Plotting the line and point graph with inconsistent data points
+```{r}
+ggplot(data, aes(x = dose1, y = population)) +
+ geom_line() +
+ geom_point()
+```
+### 91.Plotting the line and point graph with inconsistent data points and log on y axis
+```{r}
+ggplot(data, aes(x = dose2, y = population)) +
+ geom_line() +
+ geom_point() +
+ scale_y_log10()
+```
+### 92.Adding mapsup colour to line graph
+```{r}
+ggplot(data, aes(x = dose2, y = dose1, colour = population)) +
+ geom_line()
+```
+### 93.Plotting Dendogram for cluster classification
+```{r}
+hc <- hclust(dist(datam))
+# Make the dendrogram
+plot(hc)
+# With text aligned
+plot(hc, hang = -1)
+```
+### 94.Correlation matrix with correlation coefcients
+```{r}
+col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
+corrplot(mcor, method = "shade", shade.col = NA, tl.col = "black", tl.srt = 45,
+ col = col(200), addCoef.col = "black", cl.pos = "n", order = "AOE")
+```
+
+### 95.Correlation matrix with coloured squares
+```{r}
+corrplot(mcor, method = "shade", shade.col = NA, tl.col = "black", tl.srt = 45)
+```
+
+### 96.Correlation matrix   
+```{r}
+library(corrplot)
+datam=data.matrix(data3)
+mcor <- cor(datam)
+corrplot(mcor)
+```
+
+### 97.Points and density mapped to alpha
+```{r}
+faithful_p +
+ geom_point() +
+ stat_density2d(aes(alpha = ..density..), geom = "tile", contour = FALSE)
+```
+
+### 98.Density plot with smaller bandwidth in the x and y direction
+```{r}
+faithful_p +
+ stat_density2d(aes(fill = ..density..), geom = "raster", contour = FALSE)
+```
+
+### 99.Above plot with Contour lines, with height mapped to color
+```{r}
+faithful_p +
+ stat_density2d(aes(colour = ..level..))
+```
+### 100. Making a density plot of 2-dimentional data
+```{r}
+faithful_p <- ggplot(data, aes(x = dose1, y = dose2))
+faithful_p +
+ geom_point() +
+ stat_density2d()
+```
+
+
+# Git Hub link to the codes: 
+https://github.com/leoo07/Exploratory-Data-Analysis-R-commands
